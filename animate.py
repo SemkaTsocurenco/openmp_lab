@@ -11,7 +11,7 @@ def read_data(filename):
     z = data[:, 2]
     return x, y, z
 
-files = sorted(glob.glob("temperature_step_*.dat"), key=lambda x: int(re.findall(r'\d+', x)[-1]))
+files = sorted(glob.glob("./potok1_size90/temperature_step_*.dat"), key=lambda x: int(re.findall(r'\d+', x)[-1]))
 
 fig, ax = plt.subplots()
 contour = None
