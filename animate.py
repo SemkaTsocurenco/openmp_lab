@@ -30,7 +30,7 @@ def update(frame):
     ax.set_title(f"Шаг времени: {frame * 100}")
     return contour
 
-ani = FuncAnimation(fig, update, frames=len(files), repeat=False)
+ani = FuncAnimation(fig, update, frames=len(files), repeat=True)
 ax.set_xlabel('X')
 ax.set_ylabel('Y')
 ax.set_title('Анимация распределения температуры на треугольной пластине')

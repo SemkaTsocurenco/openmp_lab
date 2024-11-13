@@ -5,8 +5,8 @@
 #include <algorithm>
 #include <iomanip>
 
-const int Nx = 50;     // Количество точек по оси X
-const int Ny = 50;     // Количество точек по оси Y
+const int Nx = 100;     // Количество точек по оси X
+const int Ny = 100;     // Количество точек по оси Y
 const double Lx = 8.0; // Длина основания треугольника
 const double Ly = 4.0; // Высота треугольника
 const double alpha = 0.05; // Коэффициент теплопроводности
@@ -14,7 +14,7 @@ const double dt = 0.01;    // Шаг по времени
 const double T_init = 20.0; // Начальная температура
 const double T_boundary_side = 100.0; // Температура на наклонных сторонах
 const double T_boundary_base = 50.0;  // Температура на основании
-const int steps = 2000;      // Количество временных шагов
+const int steps = 3000;      // Количество временных шагов
 const int save_interval = 100; // Интервал сохранения данных для анимации
 
 // Проверка, находится ли точка внутри равнобедренного треугольника
@@ -78,13 +78,10 @@ int main() {
                 T_new[i][int(y_right / dy)] = T_boundary_side;
                 T[i][int(y_right / dy)] = T_boundary_side; // Фиксируем для T и T_new
             }
+            T_new[i][1] = T_boundary_base;
+            T[i][1] = T_boundary_base; // Фиксируем для T и T_new
         }
 
-        // Фиксация температуры основания
-        for (int i = 0; i < Nx; ++i) {
-            T_new[i][0] = T_boundary_base;
-            T[i][0] = T_boundary_base; // Фиксируем для T и T_new
-        }
 
         // Обновляем массив температур
         std::swap(T, T_new);
