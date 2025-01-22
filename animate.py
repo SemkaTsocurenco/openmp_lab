@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import glob
 import re
-from matplotlib.animation import FuncAnimation
+from matplotlib.ticker import MaxNLocator
 
 def read_data(filename):
     data = np.loadtxt(filename)
@@ -11,27 +11,39 @@ def read_data(filename):
     z = data[:, 2]
     return x, y, z
 
-files = sorted(glob.glob("temperature_step_*.dat"), key=lambda x: int(re.findall(r'\d+', x)[-1]))
+# Сортировка файлов по числовой части имени
+files = sorted(glob.glob("./potok1_size90/temperature_step_*.dat"), key=lambda x: int(re.findall(r'\d+', x)[-1]))
 
-fig, ax = plt.subplots()
-contour = None
-cbar = None
+# Определяем количество строк и столбцов в коллаже
+rows = 5
+cols = len(files) // rows + (len(files) % rows > 0)
 
-def update(frame):
-    global contour, cbar
-    if contour:
-        for coll in contour.collections:
-            coll.remove()
-    x, y, z = read_data(files[frame])
+# Создаём фигуру для коллажа
+fig, axes = plt.subplots(rows, cols, figsize=(30, 30))
+axes = axes.flatten()
+
+for i, file in enumerate(files):
+    x, y, z = read_data(file)
+    ax = axes[i]
     contour = ax.tricontourf(x, y, z, levels=100, cmap='hot')
+    ax.set_title(f"Шаг времени: {i * 100}")
+    ax.set_xlabel("X")
+    ax.set_ylabel("Y")
+    ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+    ax.yaxis.set_major_locator(MaxNLocator(integer=True))
 
-    if cbar is None:
-        cbar = plt.colorbar(contour, ax=ax, label='Temperature (°C)')
-    ax.set_title(f"Шаг времени: {frame * 100}")
-    return contour
+    # Добавляем цветовую шкалу
+    cbar = plt.colorbar(contour, ax=ax)
+    cbar.set_label('Temperature (°C)')
 
-ani = FuncAnimation(fig, update, frames=len(files), repeat=True)
-ax.set_xlabel('X')
-ax.set_ylabel('Y')
-ax.set_title('Анимация распределения температуры на треугольной пластине')
+# Отключаем пустые оси, если файлов меньше, чем ячеек в коллаже
+for j in range(len(files), len(axes)):
+    fig.delaxes(axes[j])
+
+# Устанавливаем общий заголовок
+fig.suptitle("Коллаж распределения температуры на пластине", fontsize=16)
+plt.tight_layout()
+plt.subplots_adjust(top=0.9)
+plt.savefig("./collage.jpg")
 plt.show()
+
